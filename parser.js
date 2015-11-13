@@ -1,14 +1,26 @@
-// var request = require('request');
-// var Buffer = require('buffer').Buffer;
-// var Iconv  = require('iconv').Iconv;
-var iconv = require('iconv-lite');
-var http = require('http');
-var request = require('request');
-// var assert = require('assert');
-// var parseString = require('xml2js').parseString;
-var url = 'http://madrobots.ru/htcCatalogNew.xml';
-var utf8 = require('utf8');
+var parseString = require('xml2js').parseString;
+
+var exec = require('child_process').exec;
 var fs = require('fs');
+exec('curl -X GET http://madrobots.ru/htcCatalogNew.xml | iconv -f cp1251 -t utf8 -- > new.txt', function(err, stdout, stderr) {
+  var rs = fs.readFileSync('./new.txt');
+  parseString(rs.toString(), function (err, result) {
+    // console.dir(result)
+    // console.log(err)
+     return result.yml_catalog.shop[0].categories[0].category.map((item) => {
+      console.log(item._)
+     //  // new Category({title: body, id: item["$"]["id"]}).save(function (err) {
+     //  //   console.log('imhere')
+     //  //   if (err) // ...
+     //  //   console.log('meow');
+     //  // });
+     });
+  });
+});
+// var assert = require('assert');
+// var url = 'http://madrobots.ru/htcCatalogNew.xml';
+// var utf8 = require('utf8');
+// var fs = require('fs');
 // // var mongoose = require('mongoose');
 // // mongoose.connect('mongodb://localhost/parser');
 // // var Item = mongoose.model('Item',
@@ -24,12 +36,12 @@ var fs = require('fs');
 // //     id: Number,
 // //     title: String
 // //   });
-curl -X GET http://madrobots.ru/htcCatalogNew.xml | iconv -f cp1251 -t utf8 --
+// curl -X GET http://madrobots.ru/htcCatalogNew.xml | iconv -f cp1251 -t utf8 --
 
 //   //the whole response has been recieved, so we just print it out here
-request({ url: 'http://madrobots.ru/htcCatalogNew.xml', headers: { 'Accept-Charset': 'utf-8' } }, function(err, response, body) {
+// request({ url: 'http://madrobots.ru/htcCatalogNew.xml', headers: { 'Accept-Charset': 'utf-8' } }, function(err, response, body) {
   // console.log(utf8.decode(body));
-  console.log(body);
+  // console.log(body);
 
    // convert from UTF-8 to ISO-8859-1
    // console.log(response);
@@ -46,17 +58,14 @@ request({ url: 'http://madrobots.ru/htcCatalogNew.xml', headers: { 'Accept-Chars
    // iconv.convert(body.toString())
   // parseString(body, function (err, result) {
   //    return result.yml_catalog.shop[0].categories[0].category.map((item) => {
-      // console.log(item["_"])
-
-      // console.log(item._)
-      // new Category({title: body, id: item["$"]["id"]}).save(function (err) {
-      //   // console.log('imhere')
-      //   if (err) // ...
-      //   console.log('meow');
-      // });
-     // });
+  //     // new Category({title: body, id: item["$"]["id"]}).save(function (err) {
+  //       // console.log('imhere')
+  //       // if (err) // ...
+  //       // console.log('meow');
+  //     // });
+  //    });
   // });
-});
+// });
 
 
 // // mongoose.disconnect();
