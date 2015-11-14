@@ -1,6 +1,6 @@
 var parseString = require('xml2js').parseString;
 
-var exec = require('child_process').execSync;
+var exec = require('child_process').exec;
 var async = require('async');
 var fs = require('fs');
 var mongoose = require('mongoose');
@@ -31,23 +31,26 @@ var config = [
     { name: 'Madrobots',
       url: 'http://madrobots.ru/htcCatalogNew.xml',
       url_prepend: 'http://madrobots.ru/',
-      pictures_prepend_need: true
+      pictures_prepend_need: true,
+      filename: 'mrob.txt'
     },
     { name: 'Designboom',
       url: 'http://designboom.ru/bitrix/catalog_export/yml.php',
       url_prepend: 'http://designboom.ru/',
-      pictures_prepend_need: false
+      pictures_prepend_need: false,
+      filename: 'dboom.txt'
     }
   ]
-config.map((shop) => {
-  exec(('curl -X GET ' + shop.url + ' | iconv -f cp1251 -t utf8 -- > new.txt'), function(err, stdout, stderr) {
-    var rs = fs.readFileSync('./new.txt');
+async.series({ one: function(callback) {config.map((shop) => {
+  exec(('curl -X GET ' + shop.url + ' | iconv -f cp1251 -t utf8 -- > ' +  shop.filename), function(err, stdout, stderr) {
+    // console.log(stdout)
+    var rs = fs.readFileSync(('./' + shop.filename));
     parseString(rs.toString(), function (err, result) {
       var categories = {};
       result.yml_catalog.shop[0].categories[0].category.map((item) => {
           categories[item["$"].id] = item._
        });
-
+      console.log(shop)
       result.yml_catalog.shop[0].offers[0].offer.map((offer) => {
         // console.log(offer)
         Item.findOne({title: offer.model}, function (err, item) {
@@ -80,8 +83,9 @@ config.map((shop) => {
               categories: category_array,
               photos: pictures
             }).save(function (err) {
-              if (err)
-                console.log('saveitem', err)
+              if (err){
+                // console.log('saveitem', err)
+              }
             })
           }
         })
@@ -89,4 +93,6 @@ config.map((shop) => {
     });
   // mongoose.disconnect();
   });
+})}}, function(err, res){
 })
+setTimeout(function(){mongoose.disconnect()},100000)
