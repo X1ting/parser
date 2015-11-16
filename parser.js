@@ -3,7 +3,7 @@ var exec = require('child_process').exec;
 var async = require('async');
 var fs = require('fs');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/parser');
+mongoose.connect('mongodb://localhost/stickinza_dev');
 var CronJob = require('cron').CronJob;
 var config = [
     { name: 'Madrobots',
@@ -22,7 +22,16 @@ var config = [
 var Item = mongoose.model('Item',
   {
     title: String,
-    cover: String,
+    cover: String,  
+    likes: {
+      type: Number,
+      default: 0
+    },
+    dislikes: {
+      type: Number,
+      default: 0
+    },
+    tags: [],
     desc: String,
     shops: [
       {
@@ -36,36 +45,37 @@ var Item = mongoose.model('Item',
 
       }
     ],
-    vendor: String,
-    categories: Array,
-    id: Number,
-    photos: Array
+    // vendor: String,
+    category: [String],
+    index: Number,
+    photos: [String],
+    offers: []
   });
 
 var job = new CronJob('20 * * * * *', function() {
-  config.map((shop) => {
+  config.map(function(shop) {
     exec(('curl -X GET ' + shop.url + ' | iconv -f cp1251 -t utf8 -- > ' +  shop.filename), function(err, stdout, stderr) {
       // console.log(stdout)
       var rs = fs.readFileSync(('./' + shop.filename));
       parseString(rs.toString(), function (err, result) {
         var categories = {};
-        result.yml_catalog.shop[0].categories[0].category.map((item) => {
+        result.yml_catalog.shop[0].categories[0].category.map(function(item) {
             categories[item["$"].id] = item._
          });
         console.log(shop)
-        result.yml_catalog.shop[0].offers[0].offer.map((offer) => {
+        result.yml_catalog.shop[0].offers[0].offer.map(function(offer) {
           // console.log(offer)
           Item.findOne({title: offer.model}, function (err, item) {
             if (err)
               console.log('find', err);
             if (!item) {
               var category_array = []
-              offer.categoryId.map((id) => {
+              offer.categoryId.map(function(id) {
                 category_array.push(categories[id])
               })
               var pictures = []
               if ((offer.param[2] || {})._){
-                offer.param[2]._.split(',').map((picture) => {
+                offer.param[2]._.split(',').map(function(picture) {
                   if (shop.pictures_prepend_need)
                     pictures.push(shop.url_prepend.concat(picture))
                   else
@@ -74,9 +84,9 @@ var job = new CronJob('20 * * * * *', function() {
               pictures.push((offer.picture || {})[0])
               new Item({
                 title: offer.model[0],
-                id: offer['$'].id, 
+                index: offer['$'].id, 
                 shops: [{ name: shop.name, 
-                          price: offer.price[0], 
+                          price: offer.price[0],
                           url: offer.url[0]
                         }],
                 cover: (offer.picture || {}), 
@@ -103,6 +113,6 @@ var job = new CronJob('20 * * * * *', function() {
   }, function () {
     // mongoose.disconnect();
   },
-  false, /* Start the job right now */
+  true, /* Start the job right now */
   'America/Los_Angeles' /* Time zone of this job. */
 );
