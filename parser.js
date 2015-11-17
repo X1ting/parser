@@ -8,7 +8,7 @@ var CronJob = require('cron').CronJob;
 var config = [
     { name: 'Madrobots',
       url: 'http://madrobots.ru/htcCatalogNew.xml',
-      url_prepend: 'http://madrobots.ru/',
+      url_prepend: 'http://madrobots.ru',
       pictures_prepend_need: true,
       filename: 'mrob.txt'
     },
@@ -76,6 +76,7 @@ var job = new CronJob('20 * * * * *', function() {
               var pictures = []
               if ((offer.param[2] || {})._){
                 offer.param[2]._.split(',').map(function(picture) {
+                  picture = picture.replace(/\s/g, '');
                   if (shop.pictures_prepend_need)
                     pictures.push(shop.url_prepend.concat(picture))
                   else
