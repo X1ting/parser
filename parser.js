@@ -6,17 +6,23 @@ var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/parser');
 var CronJob = require('cron').CronJob;
 var config = [
-    { name: 'Madrobots',
-      url: 'http://madrobots.ru/htcCatalogNew.xml',
-      url_prepend: 'http://madrobots.ru/',
-      pictures_prepend_need: true,
-      filename: 'mrob.txt'
-    },
-    { name: 'Designboom',
-      url: 'http://designboom.ru/bitrix/catalog_export/yml.php',
-      url_prepend: 'http://designboom.ru/',
+    // { name: 'Madrobots',
+    //   url: 'http://madrobots.ru/htcCatalogNew.xml',
+    //   url_prepend: 'http://madrobots.ru/',
+    //   pictures_prepend_need: true,
+    //   filename: 'mrob.txt'
+    // },
+    // { name: 'Designboom',
+    //   url: 'http://designboom.ru/bitrix/catalog_export/yml.php',
+    //   url_prepend: 'http://designboom.ru/',
+    //   pictures_prepend_need: false,
+    //   filename: 'dboom.txt'
+    // },
+    { name: 'VRLF',
+      url: 'http://vrlf.ru/',
+      url_prepend: 'http://vrlf.ru/',
       pictures_prepend_need: false,
-      filename: 'dboom.txt'
+      filename: 'vrlf.txt'
     }
   ]
 var Item = mongoose.model('Item',
@@ -42,7 +48,7 @@ var Item = mongoose.model('Item',
     photos: Array
   });
 
-var job = new CronJob('20 * * * * *', function() {
+var job = new CronJob('30 2 * * * *', function() {
   config.map((shop) => {
     exec(('curl -X GET ' + shop.url + ' | iconv -f cp1251 -t utf8 -- > ' +  shop.filename), function(err, stdout, stderr) {
       // console.log(stdout)
