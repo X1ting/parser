@@ -42,6 +42,10 @@ var Item = new Schema({
     category: String,
     tags: [String],
     action_ends: Date,
+    updated: {
+      type: Date,
+      default: Date.now
+    },
     popularity: Number,
     prg6: {
       type: Boolean,
