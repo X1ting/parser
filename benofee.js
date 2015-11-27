@@ -7,15 +7,15 @@ mongoose.connect('mongodb://localhost/benofee');
 var CronJob = require('cron').CronJob;
 var config =
     [
-      { name: 'Svyaznoy',
+      { name: 'Связной',
         url: 'http://feed.tools.mgcom.ru/o.cgi?source=svyaznoy_sankt-peterburg&filter_offers=svyaznoy_credit_0_0_10',
         url_prepend: 'http://static.svyaznoy.ru/',
         pictures_prepend_need: false,
         filename: 'svyaznoy.txt'
       },
-      { name: 'Eldorado',
-        url: '',
-        url_prepend: '',
+      { name: 'Эльдорадо',
+        url: 'http://www.eldorado.ru/_export/new_yandex/showprice.php?id=33',
+        url_prepend: 'http://www.eldorado.ru/',
         pictures_prepend_need: false,
         filename: 'eldorado.txt'
       }
@@ -41,12 +41,28 @@ var Item = new Schema({
     categories: [String],
     category: String,
     tags: [String],
+    shopname: String,
+    ordered: {
+      type: Number,
+      default: 0
+    },
+    hide: {
+      type: Boolean,
+      default: false
+    },
+    discount: {
+      type: Number,
+      default: 0
+    },
     action_ends: Date,
     updated: {
       type: Date,
       default: Date.now
     },
-    popularity: Number,
+    popularity: {
+      type: Number,
+      default: 0
+    },
     prg6: {
       type: Boolean,
       default: false
@@ -88,13 +104,15 @@ var job = new CronJob('20 * * * * *', function() {
                 index: offer['$'].id, 
                 price: offer.price[0],
                 shop: offer.url[0],
+                shopname: shop.name,
                 cover: (offer.picture || {}), 
                 vendor: offer.vendor[0], 
                 desc: offer.description[0],
                 categories: category_array,
               })
               //TODO: parse photos from site. Use cheerio
-              //TODO: parse specs from site. 
+              //TODO: parse specs from site.
+              //TODO:
               newItem.save(function (err) {
                 if (err){
                   // console.log('saveitem', err)
