@@ -1,5 +1,6 @@
 var xml2js_parseString = require('xml2js').parseString;
 var exec = require('child_process').exec;
+var getPictures = require('./html_parser.js').getPictures;
 var async = require('async');
 var fs = require('fs');
 var mongoose = require('mongoose');
@@ -11,17 +12,18 @@ var config =
         url: 'http://feed.tools.mgcom.ru/o.cgi?source=svyaznoy_sankt-peterburg&filter_offers=svyaznoy_credit_0_0_10',
         url_prepend: 'http://static.svyaznoy.ru/',
         pictures_prepend_need: false,
-        filename: 'svyaznoy.txt'
-      },
-      { name: 'Эльдорадо',
-        url: 'http://www.eldorado.ru/_export/new_yandex/showprice.php?id=33',
-        url_prepend: 'http://www.eldorado.ru/',
-        pictures_prepend_need: false,
-        filename: 'eldorado.txt'
+        filename: 'svyaznoy2.txt'
       }
+      // { name: 'Эльдорадо',
+      //   url: 'http://www.eldorado.ru/_export/new_yandex/showprice.php?id=33',
+      //   url_prepend: 'http://www.eldorado.ru/',
+      //   pictures_prepend_need: false,
+      //   filename: 'eldorado.txt'
+      // }
     ];
 
-var Item = new Schema({
+var Item = mongoose.model('Item',
+  {
     title: String,
     promo: {
       type: Boolean,
@@ -84,29 +86,39 @@ var Item = new Schema({
 var job = new CronJob('20 * * * * *', function() {
   config.map(function(shop) {
     exec(('curl -X GET ' + shop.url + ' | iconv -f cp1251 -t utf8 -- > ' +  shop.filename), function(err, stdout, stderr) {
-      var rs = fs.readFileSync(('./' + shop.filename));
+      var rs = fs.readFileSync(('./svyaznoy.txt'));
+      console.log(rs.toString())
       xml2js_parseString(rs.toString(), function (err, result) {
         var categories = {};
+        console.log(result)
         result.yml_catalog.shop[0].categories[0].category.map(function(item) {
             categories[item["$"].id] = item._
          });
         result.yml_catalog.shop[0].offers[0].offer.map(function(offer) {
+          console.log(offer)
           Item.findOne({title: offer.model}, function (err, item) {
             if (err)
               console.log('find', err);
             if (!item) {
+              var photos = [];
+              getPictures(offer.model[0], offer.url[0], function(err, result){
+                if (result)
+                  photos = result;
+                else
+                  photos = ['not'];
+              });
               var category_array = []
               offer.categoryId.map(function(id) {
                 category_array.push(categories[id])
               })
               var newItem = new Item({
                 title: offer.model[0],
-                index: offer['$'].id, 
+                index: offer['$'].id,
                 price: offer.price[0],
                 shop: offer.url[0],
                 shopname: shop.name,
-                cover: (offer.picture || {}), 
-                vendor: offer.vendor[0], 
+                cover: (offer.picture || {}),
+                vendor: offer.vendor[0],
                 desc: offer.description[0],
                 categories: category_array,
               })
