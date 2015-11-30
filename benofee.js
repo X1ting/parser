@@ -115,10 +115,6 @@ var job = new CronJob('20 * * * * *', function() {
                 if (result) {
                   photos = result.images;
                   specs = result.specs;
-                if (err){
-                  console.log(err)
-                }
-                }
                 var category_array = []
                 offer.categoryId.map(function(id) {
                   category_array.push(categories[id])
@@ -146,6 +142,7 @@ var job = new CronJob('20 * * * * *', function() {
                     // console.log('saveitem', err)
                   }
                 })
+              }
               });
             }
           })

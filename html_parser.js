@@ -21,19 +21,7 @@ exports.getPictures = function(url, name, done) {
   console.log(url_prepared)
     try {
       exec(('curl -X GET ' + url_prepared + ' | iconv -f cp1251 -t utf8 -- > htmls/' + name + '.html'), function(err, stdout, stderr) {
-          if (err){
-            console.log('err', err)
-            return done(err)
-          }
-          if (stderr) {
-            console.log('stderr', stderr)
-            return done(stderr)
-          }
 
-          if (stdout) {
-            console.log('stdout', stdout)
-            return done(stdout)
-          }
 
           var rs = fs.readFileSync(('./htmls/' + name +'.html'));
           $ = cheerio.load(rs.toString());
