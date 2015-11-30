@@ -24,16 +24,15 @@ exports.getPictures = function(modelName, url, done) {
     .then(function(response){
       $ = cheerio.load(response.data);
       var result = [];
-      $('img').each(function(i, item){
-        if ((item.attribs.src.indexOf('/static.svyaznoy.ru/upload/') > 0) && (isOffer(item.attribs.src, model_array)))
-          result.push(item.attribs.src)
-      });
-      // console.log(result)
+      $('.hidden.big').each(function(i, item){
+        result.push(item.attribs.href)
+      })
       return done(null, result);
+      // console.log(result)
     })
     .catch(function(error){
       // console.warn('Error', error);
-      return done(err)
+      return done(error)
     });
     // find(url, modelName, function(err, result){
     //   if (result)
