@@ -69,9 +69,13 @@ var Item = mongoose.model('Item',
       type: Boolean,
       default: false
     },
+    prg10: {
+      type: Boolean,
+      default: false
+    },
     prg12: {
       type: Boolean,
-      default: true
+      default: false
     },
     prg24: {
       type: Boolean,
@@ -125,6 +129,8 @@ var job = new CronJob('20 * * * * *', function() {
               //TODO: parse photos from site. Use cheerio
               //TODO: parse specs from site.
               //TODO:
+              if(shop.name == 'Связной')
+                newItem.prg10 = true;
               newItem.save(function (err) {
                 if (err){
                   // console.log('saveitem', err)
