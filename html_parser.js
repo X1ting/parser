@@ -29,7 +29,7 @@ exports.getPictures = function(url, done) {
             var splitted = spec.split(':')
             var title = prepareString(splitted[0])
             var value = prepareString(splitted[1])
-            result.specs.push({title: title, value: value})
+            result.specs.push({name: title, value: value})
           }
         }
       })
