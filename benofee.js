@@ -43,6 +43,10 @@ var Item = mongoose.model('Item',
     categories: [String],
     category: String,
     tags: [String],
+    hide: {
+        type: Boolean,
+        default: false
+    },
     shopname: String,
     ordered: {
       type: Number,
