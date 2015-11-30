@@ -95,7 +95,7 @@ var job = new CronJob('20 * * * * *', function() {
   config.map(function(shop) {
     exec(('curl -X GET ' + shop.url + ' | iconv -f cp1251 -t utf8 -- > ' +  shop.filename), function(err, stdout, stderr) {
       var rs = fs.readFileSync(('./svt.txt'));
-      console.log(rs.toString())
+      // console.log(rs.toString())
       xml2js_parseString(rs.toString(), function (err, result) {
         var categories = {};
         // console.log(result)
@@ -112,38 +112,37 @@ var job = new CronJob('20 * * * * *', function() {
               var specs =[]
               getPictures(offer.url[0], function(err, result){
                 if (result) {
-                  console.log(result)
                   photos = result.images;
                   specs = result.specs;
                 }
+                var category_array = []
+                offer.categoryId.map(function(id) {
+                  category_array.push(categories[id])
+                })
+                var newItem = new Item({
+                  title: offer.model[0],
+                  index: offer['$'].id,
+                  price: offer.price[0],
+                  shop: offer.url[0],
+                  photos: photos,
+                  specs: specs,
+                  shopname: shop.name,
+                  cover: (offer.picture || {}),
+                  vendor: offer.vendor[0],
+                  desc: offer.description[0],
+                  categories: category_array,
+                })
+                //TODO: parse photos from site. Use cheerio
+                //TODO: parse specs from site.
+                //TODO:
+                if(shop.name == 'Связной')
+                  newItem.prg10 = true;
+                newItem.save(function (err) {
+                  if (err){
+                    // console.log('saveitem', err)
+                  }
+                })
               });
-              var category_array = []
-              offer.categoryId.map(function(id) {
-                category_array.push(categories[id])
-              })
-              var newItem = new Item({
-                title: offer.model[0],
-                index: offer['$'].id,
-                price: offer.price[0],
-                shop: offer.url[0],
-                photos: photos,
-                specs: specs,
-                shopname: shop.name,
-                cover: (offer.picture || {}),
-                vendor: offer.vendor[0],
-                desc: offer.description[0],
-                categories: category_array,
-              })
-              //TODO: parse photos from site. Use cheerio
-              //TODO: parse specs from site.
-              //TODO:
-              if(shop.name == 'Связной')
-                newItem.prg10 = true;
-              newItem.save(function (err) {
-                if (err){
-                  // console.log('saveitem', err)
-                }
-              })
             }
           })
         })
