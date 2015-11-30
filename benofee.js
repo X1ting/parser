@@ -105,11 +105,12 @@ var job = new CronJob('20 * * * * *', function() {
               console.log('find', err);
             if (!item) {
               var photos = [];
-              getPictures(offer.model[0], offer.url[0], function(err, result){
-                if (result)
-                  photos = result;
-                else
-                  photos = ['not'];
+              var specs =[]
+              getPictures(offer.url[0], function(err, result){
+                if (result) {
+                  photos = result.images;
+                  specs = result.specs;
+                }
               });
               var category_array = []
               offer.categoryId.map(function(id) {

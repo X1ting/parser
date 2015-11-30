@@ -1,37 +1,43 @@
 var cheerio = require('cheerio');
 var axios = require('axios');
-// var url = 'http://www.svyaznoy.ru/catalog/audiovideo/1731/36404'
-// var modelName = 'Voxtel MR550'
+// var url = 'http://www.svyaznoy.ru/catalog/phone/224/2467619?city_id=171'
 
-function isOffer (offerStr, array) {
-  var flag = false;
-  array.map(function(item) {if (offerStr.indexOf(item) > 0) {flag = true;}});
-  return flag;
-};
-
-function prepareModel (model) {
-  var result = [];
-  model.split(' ').map(function(item) {
-    if (item.length > 3) {
-      result.push(item.toLowerCase());
-    }
-  })
-  return result;
+function prepareUrl(url) {
+  return url.split('?')[0] + '/specs#mainContent'
 }
-exports.getPictures = function(modelName, url, done) {
-  var model_array = prepareModel(modelName);
-  axios.get(url)
+
+function prepareString(string){
+  if (string)
+    return string.replace(/( )*/, '').replace(/(\r\n|\n|\r)/gm," ")
+  else
+    return ''
+}
+
+exports.getPictures = function(url, done) {
+  var url_prepared = prepareUrl(url)
+  axios.get(url_prepared)
     .then(function(response){
       $ = cheerio.load(response.data);
-      var result = [];
+      var result = {images: [], specs: []};
       $('.hidden.big').each(function(i, item){
-        result.push(item.attribs.href)
+        result.images.push(item.attribs.href)
       })
-      return done(null, result);
+      $('.config-block div').each(function(i, item){
+        if (item.children[0]) {
+          if (item.children[0].data) {
+            var spec  = item.children[0].data
+            var splitted = spec.split(':')
+            var title = prepareString(splitted[0])
+            var value = prepareString(splitted[1])
+            result.specs.push({title: title, value: value})
+          }
+        }
+      })
       // console.log(result)
+      return done(null, result);
     })
     .catch(function(error){
-      // console.warn('Error', error);
+      // console.log('Error', error);
       return done(error)
     });
     // find(url, modelName, function(err, result){
