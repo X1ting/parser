@@ -94,16 +94,16 @@ var Item = mongoose.model('Item',
 var job = new CronJob('20 * * * * *', function() {
   config.map(function(shop) {
     exec(('curl -X GET ' + shop.url + ' | iconv -f cp1251 -t utf8 -- > ' +  shop.filename), function(err, stdout, stderr) {
-      var rs = fs.readFileSync(('./svyaznoy.txt'));
+      var rs = fs.readFileSync(('./svt.txt'));
       console.log(rs.toString())
       xml2js_parseString(rs.toString(), function (err, result) {
         var categories = {};
-        console.log(result)
+        // console.log(result)
         result.yml_catalog.shop[0].categories[0].category.map(function(item) {
             categories[item["$"].id] = item._
          });
         result.yml_catalog.shop[0].offers[0].offer.map(function(offer) {
-          console.log(offer)
+          // console.log(offer)
           Item.findOne({title: offer.model}, function (err, item) {
             if (err)
               console.log('find', err);
@@ -112,6 +112,7 @@ var job = new CronJob('20 * * * * *', function() {
               var specs =[]
               getPictures(offer.url[0], function(err, result){
                 if (result) {
+                  console.log(result)
                   photos = result.images;
                   specs = result.specs;
                 }
@@ -125,6 +126,8 @@ var job = new CronJob('20 * * * * *', function() {
                 index: offer['$'].id,
                 price: offer.price[0],
                 shop: offer.url[0],
+                photos: photos,
+                specs: specs,
                 shopname: shop.name,
                 cover: (offer.picture || {}),
                 vendor: offer.vendor[0],
