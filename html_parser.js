@@ -11,9 +11,13 @@ function prepareUrl(url) {
 
 function prepareString(string){
   if (string)
-    return string.replace(/( )*/, '').replace(/(\r\n|\n|\r)/gm," ")
+    return string.replace(/( )*/g, '').replace(/(\r\n|\n|\r)/gm," ")
   else
     return ''
+}
+
+function isBlank(str) {
+    return (!str || /^\s*$/.test(str));
 }
 
 exports.getPictures = function(url, name, done) {
@@ -21,8 +25,6 @@ exports.getPictures = function(url, name, done) {
   console.log(url_prepared)
     try {
       exec(('curl -X GET ' + url_prepared + ' | iconv -f cp1251 -t utf8 -- > htmls/' + name + '.html'), function(err, stdout, stderr) {
-
-
           var rs = fs.readFileSync(('./htmls/' + name +'.html'));
           $ = cheerio.load(rs.toString());
           console.log(rs.toString())
@@ -37,7 +39,9 @@ exports.getPictures = function(url, name, done) {
                 var splitted = spec.split(':')
                 var title = prepareString(splitted[0])
                 var value = prepareString(splitted[1])
-                result.specs.push({name: title, value: value})
+                if (!isBlank(title) && !isBlank(value)) {
+                  result.specs.push({name: title, value: value})
+                }
               }
             }
           })
