@@ -11,7 +11,7 @@ function prepareUrl(url) {
 
 function prepareString(string){
   if (string)
-    return string.replace(/( )*/g, '').replace(/(\r\n|\n|\r)/gm," ")
+    return string.replace(/(  )*/g, '').replace(/(\r\n|\n|\r)/gm," ")
   else
     return ''
 }
