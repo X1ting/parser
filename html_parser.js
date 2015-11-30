@@ -1,5 +1,7 @@
 var cheerio = require('cheerio');
 var axios = require('axios');
+// var url = 'http://www.svyaznoy.ru/catalog/audiovideo/1731/36404'
+// var modelName = 'Voxtel MR550'
 
 function isOffer (offerStr, array) {
   var flag = false;
@@ -26,11 +28,12 @@ exports.getPictures = function(modelName, url, done) {
         if ((item.attribs.src.indexOf('/static.svyaznoy.ru/upload/') > 0) && (isOffer(item.attribs.src, model_array)))
           result.push(item.attribs.src)
       });
+      // console.log(result)
       return done(null, result);
     })
     .catch(function(error){
-      console.warn('Error', error);
-      throw error;
+      // console.warn('Error', error);
+      return done(err)
     });
     // find(url, modelName, function(err, result){
     //   if (result)
