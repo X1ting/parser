@@ -3,13 +3,13 @@ var axios = require('axios');
 
 function isOffer (offerStr, array) {
   var flag = false;
-  array.map((item) => {if (offerStr.indexOf(item) > 0) {flag = true;}});
+  array.map(function(item) {if (offerStr.indexOf(item) > 0) {flag = true;}});
   return flag;
 };
 
 function prepareModel (model) {
   var result = [];
-  model.split(' ').map((item) => {
+  model.split(' ').map(function(item) {
     if (item.length > 3) {
       result.push(item.toLowerCase());
     }
@@ -36,5 +36,5 @@ exports.getPictures = function(modelName, url, done) {
     //   if (result)
     //     console.log(result)
     // })
-    // find(url, modelName).then((response) => {console.log(response) }).catch((e) => {console.log(e)})
+    // find(url, modelName).then((resfunctionponse) {console.log(response) }).catfunctionch((e) {console.log(e)})
 }
