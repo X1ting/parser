@@ -8,18 +8,18 @@ mongoose.connect('mongodb://localhost/benofee');
 var CronJob = require('cron').CronJob;
 var config =
     [
-      // { name: 'Связной',
-      //   url: 'http://feed.tools.mgcom.ru/o.cgi?source=svyaznoy_sankt-peterburg&filter_offers=svyaznoy_credit_0_0_10',
-      //   url_prepend: 'http://static.svyaznoy.ru/',
-      //   pictures_prepend_need: false,
-      //   filename: 'svyaznoy2.txt'
-      // }
-      { name: 'Эльдорадо',
-        url: 'http://www.eldorado.ru/_export/new_yandex/showprice.php?id=33',
-        url_prepend: 'http://www.eldorado.ru/',
+      { name: 'Связной',
+        url: 'http://feed.tools.mgcom.ru/o.cgi?source=svyaznoy_sankt-peterburg&filter_offers=svyaznoy_credit_0_0_10',
+        url_prepend: 'http://static.svyaznoy.ru/',
         pictures_prepend_need: false,
-        filename: 'eldorado.txt'
+        filename: 'svyaznoy2.txt'
       }
+      // { name: 'Эльдорадо',
+      //   url: 'http://www.eldorado.ru/_export/new_yandex/showprice.php?id=33',
+      //   url_prepend: 'http://www.eldorado.ru/',
+      //   pictures_prepend_need: false,
+      //   filename: 'eldorado.txt'
+      // }
     ];
 
 var Item = mongoose.model('Item',
@@ -114,8 +114,13 @@ var job = new CronJob('20 * * * * *', function() {
               offer.categoryId.map(function(id) {
                 category_array.push(categories[id])
               })
+              var itemTitle;
+              if(offer.vendor[0] != 'Apple')
+                itemTitle = offer.vendor[0] +' '+offer.model[0];
+              else
+                itemTitle = offer.model[0];
               var newItem = new Item({
-                title: offer.model[0],
+                title: itemTitle,
                 index: offer['$'].id,
                 price: offer.price[0],
                 shop: offer.url[0],
