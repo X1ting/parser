@@ -8,18 +8,18 @@ mongoose.connect('mongodb://localhost/benofee');
 var CronJob = require('cron').CronJob;
 var config =
     [
-      { name: 'Связной',
-        url: 'http://feed.tools.mgcom.ru/o.cgi?source=svyaznoy_sankt-peterburg&filter_offers=svyaznoy_credit_0_0_10',
-        url_prepend: 'http://static.svyaznoy.ru/',
-        pictures_prepend_need: false,
-        filename: 'svyaznoy2.txt'
-      }
-      // { name: 'Эльдорадо',
-      //   url: 'http://www.eldorado.ru/_export/new_yandex/showprice.php?id=33',
-      //   url_prepend: 'http://www.eldorado.ru/',
+      // { name: 'Связной',
+      //   url: 'http://feed.tools.mgcom.ru/o.cgi?source=svyaznoy_sankt-peterburg&filter_offers=svyaznoy_credit_0_0_10',
+      //   url_prepend: 'http://static.svyaznoy.ru/',
       //   pictures_prepend_need: false,
-      //   filename: 'eldorado.txt'
+      //   filename: 'svyaznoy2.txt'
       // }
+      { name: 'Эльдорадо',
+        url: 'http://www.eldorado.ru/_export/new_yandex/showprice.php?id=33',
+        url_prepend: 'http://www.eldorado.ru/',
+        pictures_prepend_need: false,
+        filename: 'eldorado.txt'
+      }
     ];
 
 var Item = mongoose.model('Item',
@@ -93,8 +93,10 @@ var Item = mongoose.model('Item',
 
 var job = new CronJob('20 * * * * *', function() {
   config.map(function(shop) {
+    // console.log(shop)
     exec(('curl -X GET ' + shop.url + ' | iconv -f cp1251 -t utf8 -- > ' +  shop.filename), function(err, stdout, stderr) {
-      var rs = fs.readFileSync(('./svt.txt'));
+      var rs = fs.readFileSync(('./' + shop.filename));
+      // console.log(err, stdout, stderr)
       // console.log(rs.toString())
       xml2js_parseString(rs.toString(), function (err, result) {
         var categories = {};
@@ -110,7 +112,7 @@ var job = new CronJob('20 * * * * *', function() {
             if (!item) {
               var photos = [];
               var specs =[]
-              getPictures(offer.url[0], offer.model[0].split(' ')[0], function(err, result){
+              getPictures(shop.name, offer.url[0], function(err, result){
                 console.log(offer.url[0])
                 if (result) {
                   photos = result.images;

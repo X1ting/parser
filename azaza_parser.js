@@ -5,7 +5,7 @@ var fs = require('fs');
 
 // var url = 'http://www.svyaznoy.ru/catalog/phone/224/2467619?city_id=171'
 
-// var url = 'http://www.eldorado.ru/cat/detail/56000458/?utm_source=yandexmarket&utm_medium=cpc&utm_campaign=Saint-Petersburg&utm_content=56000458&utm_term=56000458'
+var url = 'http://www.eldorado.ru/cat/detail/71095858/?utm_source=yandexmarket&utm_medium=cpc&utm_campaign=Saint-Petersburg&utm_content=71095858&utm_term=71095858'
 
 function prepareUrl(url) {
   return url.split('?')[0] + '/specs#mainContent';
@@ -30,11 +30,11 @@ function isBlank(str) {
     return (!str || /^\s*$/.test(str));
 }
 
-exports.getPictures = function(shop, url, done) {
-  var url_prepared = prepareUrl(url)
-  if (isEldorado(shop)){
+// exports.getPictures = function(shop, url, done) {
+//   var url_prepared = prepareUrl(url)
+//   if (isEldorado(shop)){
     url_prepared = prepareUrlEldorado(url)
-  }
+  // }
   console.log(url_prepared)
     try {
       var name = Math.random().toString().split('.')[1]
@@ -47,7 +47,7 @@ exports.getPictures = function(shop, url, done) {
           $ = cheerio.load(rs.toString());
           // console.log(rs.toString())
           var result = {images: [], specs: []};
-          if (isEldorado(shop)) {
+          // if (isEldorado(shop)) {
             $('img').each(function(i, item){
               var itemN = item.parent.attribs
               if (itemN.class && itemN.href) {
@@ -67,8 +67,8 @@ exports.getPictures = function(shop, url, done) {
                 value = item.children[1].children[0].data
               result.specs.push({name: name, value: value})
             })
-          }
-          else {
+          // }
+          // else {
             $('.hidden.big').each(function(i, item){
               result.images.push(item.attribs.href)
             })
@@ -85,14 +85,14 @@ exports.getPictures = function(shop, url, done) {
                 }
               }
             })
-          }
-        // console.log(result)
-        return done(null, result);
+          // }
+        console.log(result)
+        // return done(null, result);
       })
     }
     catch (err) {
-      // console.log(err)
-      return done(err);
+      console.log(err)
+      // return done(err);
     }
 
     // find(url, modelName, function(err, result){
@@ -100,4 +100,4 @@ exports.getPictures = function(shop, url, done) {
     //     console.log(result)
     // })
     // find(url, modelName).then((resfunctionponse) {console.log(response) }).catfunctionch((e) {console.log(e)})
-}
+// }
