@@ -139,7 +139,7 @@ var job = new CronJob('20 * * * * *', function() {
                 newItem.prg10 = true;
               }
 
-              Item.findOneAndUpdate({title: offer.model}, newItem, {upsert: true, new: true}, function (err, item) {
+              Item.findOneAndUpdate({title: offer.model[0]}, newItem, {upsert: true, new: true}, function (err, item) {
                 if (err)
                   console.log('find', err);
                 // if (!item) {
