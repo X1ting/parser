@@ -113,41 +113,41 @@ var job = new CronJob('20 * * * * *', function() {
                 if (result) {
                   photos = result.images;
                   specs = result.specs;
-                var category_array = []
-                offer.categoryId.map(function(id) {
-                  category_array.push(categories[id])
-                })
-                var newItem = new Item({
-                  title: offer.model[0],
-                  index: offer['$'].id,
-                  price: offer.price[0],
-                  shop: offer.url[0],
-                  photos: photos,
-                  specs: specs,
-                  shopname: shop.name,
-                  cover: (offer.picture || {}),
-                  vendor: offer.vendor[0],
-                  desc: offer.description[0],
-                  categories: category_array,
-                })
-                //TODO: parse photos from site. Use cheerio
-                //TODO: parse specs from site.
-                //TODO:
-                if(shop.name == 'Связной'){
-                  newItem.prg10 = true;
-                }
+                  var category_array = []
+                  offer.categoryId.map(function(id) {
+                    category_array.push(categories[id])
+                  })
+                  var newItem = new Item({
+                    title: offer.model[0],
+                    index: offer['$'].id,
+                    price: offer.price[0],
+                    shop: offer.url[0],
+                    photos: photos,
+                    specs: specs,
+                    shopname: shop.name,
+                    cover: (offer.picture || {}),
+                    vendor: offer.vendor[0],
+                    desc: offer.description[0],
+                    categories: category_array,
+                  })
+                  //TODO: parse photos from site. Use cheerio
+                  //TODO: parse specs from site.
+                  //TODO:
+                  if(shop.name == 'Связной'){
+                    newItem.prg10 = true;
+                  }
 
-          Item.findOneAndUpdate({title: offer.model}, newItem, {upsert: true, new: true}, function (err, item) {
-            if (err)
-              console.log('find', err);
-            // if (!item) {
-            //     newItem.save(function (err) {
-            //       if (err){
-            //         // console.log('saveitem', err)
-            //       }
-            //     })
-            //   }
-              });
+                  Item.findOneAndUpdate({title: offer.model}, newItem, {upsert: true, new: true}, function (err, item) {
+                    if (err)
+                      console.log('find', err);
+                    // if (!item) {
+                    //     newItem.save(function (err) {
+                    //       if (err){
+                    //         // console.log('saveitem', err)
+                    //       }
+                    //     })
+                    //   }
+                      });
             }
           })
         })
