@@ -74,9 +74,13 @@ exports.getPictures = function(shop, url, done) {
             })
             $('.config-block div').each(function(i, item){
               if (item.children[0]) {
-                if (item.children[0].data) {
-                  var spec  = item.children[0].data
-                  var splitted = spec.split(':')
+                var text = ''
+                item.children.map((item) => {
+                  if (item.data !== undefined)
+                    text += prepareString(item.data)
+                })
+                if (item.parent.parent.name == 'div') {
+                  var splitted = text.split(':')
                   var title = prepareString(splitted[0])
                   var value = prepareString(splitted[1])
                   if (!isBlank(title) && !isBlank(value)) {

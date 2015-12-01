@@ -5,7 +5,7 @@ var fs = require('fs');
 
 // var url = 'http://www.svyaznoy.ru/catalog/phone/224/2467619?city_id=171'
 
-var url = 'http://www.eldorado.ru/cat/detail/71095858/?utm_source=yandexmarket&utm_medium=cpc&utm_campaign=Saint-Petersburg&utm_content=71095858&utm_term=71095858'
+var url = 'http://www.svyaznoy.ru/catalog/phone/224/2399960/specs#mainContent'
 
 function prepareUrl(url) {
   return url.split('?')[0] + '/specs#mainContent';
@@ -21,7 +21,7 @@ function prepareUrlEldorado(url) {
 
 function prepareString(string){
   if (string)
-    return string.replace(/(  )*/g, '').replace(/(\r\n|\n|\r)/gm," ")
+    return string.replace(/(  )*/g, '').replace(/(\r\n|\n|\r)/gm," ").replace(/\/noindex/,'').replace(/noindex/, '')
   else
     return ''
 }
@@ -31,9 +31,9 @@ function isBlank(str) {
 }
 
 // exports.getPictures = function(shop, url, done) {
-//   var url_prepared = prepareUrl(url)
+  var url_prepared = prepareUrl(url)
 //   if (isEldorado(shop)){
-    url_prepared = prepareUrlEldorado(url)
+    // url_prepared = prepareUrlEldorado(url)
   // }
   console.log(url_prepared)
     try {
@@ -74,15 +74,26 @@ function isBlank(str) {
             })
             $('.config-block div').each(function(i, item){
               if (item.children[0]) {
-                if (item.children[0].data) {
-                  var spec  = item.children[0].data
-                  var splitted = spec.split(':')
+                var text = ''
+                item.children.map((item) => {
+                  if (item.data !== undefined)
+                    text += prepareString(item.data)
+                })
+                // if (text.indexOf(':') > 0)
+                if (item.parent.parent.name == 'div') {
+                  var splitted = text.split(':')
                   var title = prepareString(splitted[0])
                   var value = prepareString(splitted[1])
                   if (!isBlank(title) && !isBlank(value)) {
                     result.specs.push({name: title, value: value})
                   }
                 }
+
+                // if (item.children[0].data) {
+                //   var spec  = item.children[0].data
+                //   console.log(item.children)
+                //   }
+                // }
               }
             })
           // }
