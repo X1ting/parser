@@ -21,7 +21,7 @@ function prepareUrlEldorado(url) {
 
 function prepareString(string){
   if (string)
-    return string.replace(/(  )*/g, '').replace(/(\r\n|\n|\r)/gm," ")
+    return string.replace(/(  )*/g, '').replace(/(\r\n|\n|\r)/gm," ").replace(/\/noindex/,'').replace(/noindex/, '')
   else
     return ''
 }
