@@ -106,10 +106,6 @@ var job = new CronJob('20 * * * * *', function() {
          });
         result.yml_catalog.shop[0].offers[0].offer.map(function(offer) {
           // console.log(offer)
-          Item.findOne({title: offer.model}, function (err, item) {
-            if (err)
-              console.log('find', err);
-            if (!item) {
               var photos = [];
               var specs =[]
               getPictures(shop.name, offer.url[0], function(err, result){
@@ -137,14 +133,20 @@ var job = new CronJob('20 * * * * *', function() {
                 //TODO: parse photos from site. Use cheerio
                 //TODO: parse specs from site.
                 //TODO:
-                if(shop.name == 'Связной')
+                if(shop.name == 'Связной'){
                   newItem.prg10 = true;
-                newItem.save(function (err) {
-                  if (err){
-                    // console.log('saveitem', err)
-                  }
-                })
-              }
+                }
+
+          Item.findOneAndUpdate({title: offer.model}, newItem, {upsert: true, new: true}, function (err, item) {
+            if (err)
+              console.log('find', err);
+            // if (!item) {
+            //     newItem.save(function (err) {
+            //       if (err){
+            //         // console.log('saveitem', err)
+            //       }
+            //     })
+            //   }
               });
             }
           })
