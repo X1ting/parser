@@ -75,7 +75,7 @@ exports.getPictures = function(shop, url, done) {
             $('.config-block div').each(function(i, item){
               if (item.children[0]) {
                 var text = ''
-                item.children.map((item) => {
+                item.children.map(function(item){
                   if (item.data !== undefined)
                     text += prepareString(item.data)
                 })
