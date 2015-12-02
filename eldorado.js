@@ -80,7 +80,7 @@ var Item = mongoose.model('Item',
     }
 });
 
-var job = new CronJob('20 * * * * *', function() {
+// var job = new CronJob('20 * * * * *', function() {
   config.map(function(shop) {
     var obj = xlsx.parse(__dirname + '/r.xlsx');
     var hire10 = [];
@@ -107,9 +107,10 @@ var job = new CronJob('20 * * * * *', function() {
         // console.log(result)
         var timeout = 0;
         result.yml_catalog.shop[0].categories[0].category.map(function(item) {
-            categories[item["$"].id] = item._
+            categories[item.$.id] = {
+              name: item._,
+              parentId: parseInt(item.$.parentId)}
          });
-        console.log(result.yml_catalog.shop[0].offers[0].offer[0]);
         var hire10offers = [];
         var hire12offers = [];
         var hire24offers = [];
@@ -118,14 +119,21 @@ var job = new CronJob('20 * * * * *', function() {
           // console.log(offer['$'].ids)
           if(hire10.indexOf(parseInt(offer['$'].id)) != -1){
             setTimeout(function(){
+              var category_array = []
+
+              offer.categoryId.map(function(id) {
+                var currCat = categories[id]
+                category_array.push(currCat.name)
+                do{
+                  currCat = categories[currCat.parentId]
+                  category_array.push(currCat.name)
+                }while(parseInt(currCat.parentId) != 0);
+              })
+              console.log(category_array);
               getPictures(shop.name, offer.url[0], function(err, result){
                 if (result) {
                   photos = result.images;
                   specs = result.specs;
-                  var category_array = []
-                  offer.categoryId.map(function(id) {
-                    category_array.push(categories[id])
-                  })
                   var itemTitle;
                   if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
                     itemTitle = offer.vendor[0] +' '+offer.model[0];
@@ -157,14 +165,21 @@ var job = new CronJob('20 * * * * *', function() {
           }
           else if(hire12.indexOf(parseInt(offer['$'].id)) != -1){
             setTimeout(function(){
+              var category_array = []
+
+              offer.categoryId.map(function(id) {
+                var currCat = categories[id]
+                category_array.push(currCat.name)
+                do{
+                  currCat = categories[currCat.parentId]
+                  category_array.push(currCat.name)
+                }while(parseInt(currCat.parentId) != 0);
+              })
+              console.log(category_array);
               getPictures(shop.name, offer.url[0], function(err, result){
                 if (result) {
                   photos = result.images;
                   specs = result.specs;
-                  var category_array = []
-                  offer.categoryId.map(function(id) {
-                    category_array.push(categories[id])
-                  })
                   var itemTitle;
                   if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
                     itemTitle = offer.vendor[0] +' '+offer.model[0];
@@ -196,14 +211,21 @@ var job = new CronJob('20 * * * * *', function() {
           }
           else if(hire24.indexOf(parseInt(offer['$'].id)) != -1){
             setTimeout(function(){
+              var category_array = [];
+
+              offer.categoryId.map(function(id) {
+                var currCat = categories[id]
+                category_array.push(currCat.name)
+                do{
+                  currCat = categories[currCat.parentId]
+                  category_array.push(currCat.name)
+                }while(parseInt(currCat.parentId) != 0);
+              })
+              console.log(category_array);
               getPictures(shop.name, offer.url[0], function(err, result){
                 if (result) {
                   photos = result.images;
                   specs = result.specs;
-                  var category_array = []
-                  offer.categoryId.map(function(id) {
-                    category_array.push(categories[id])
-                  })
                   var itemTitle;
                   if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
                     itemTitle = offer.vendor[0] +' '+offer.model[0];
@@ -243,9 +265,9 @@ var job = new CronJob('20 * * * * *', function() {
    * at 11:30:00 AM. It does not run on Saturday
    * or Sunday.
    */
-  }, function () {
-    mongoose.disconnect();
-  },
-  true, /* Start the job right now */
-  'America/Los_Angeles' /* Time zone of this job. */
-);
+  // }, function () {
+    // mongoose.disconnect();
+  // },
+  // true, /* Start the job right now */
+  // 'America/Los_Angeles' /* Time zone of this job. */
+// );
