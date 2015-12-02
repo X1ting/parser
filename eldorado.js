@@ -64,28 +64,23 @@ var Item = mongoose.model('Item',
       default: 0
     },
     prg6: {
-      type: Boolean,
-      default: false
+      type: String
     },
     prg10: {
-      type: Boolean,
-      default: false
+      type: String
     },
     prg12: {
-      type: Boolean,
-      default: false
+      type: String
     },
     prg24: {
-      type: Boolean,
-      default: false
+      type: String
     },
     prg36: {
-      type: Boolean,
-      default: false
+      type: String
     }
 });
 
-var job = new CronJob('20 1 * * * *', function() {
+var job = new CronJob('20 * * * * *', function() {
   config.map(function(shop) {
     var obj = xlsx.parse(__dirname + '/r.xlsx');
     var hire10 = [];
@@ -110,6 +105,7 @@ var job = new CronJob('20 1 * * * *', function() {
       xml2js_parseString(rs.toString(), function (err, result) {
         var categories = {};
         // console.log(result)
+        var timeout = 0;
         result.yml_catalog.shop[0].categories[0].category.map(function(item) {
             categories[item["$"].id] = item._
          });
@@ -121,118 +117,122 @@ var job = new CronJob('20 1 * * * *', function() {
         result.yml_catalog.shop[0].offers[0].offer.map(function(offer) {
           // console.log(offer['$'].ids)
           if(hire10.indexOf(parseInt(offer['$'].id)) != -1){
-            console.log('hire10 ',offer['$'].id)
-            getPictures(shop.name, offer.url[0], function(err, result){
-              console.log('hire10 ',offer['$'].id)
-              if (result) {
-                photos = result.images;
-                specs = result.specs;
-                var category_array = []
-                offer.categoryId.map(function(id) {
-                  category_array.push(categories[id])
-                })
-                var itemTitle;
-                if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
-                  itemTitle = offer.vendor[0] +' '+offer.model[0];
-                else
-                  itemTitle = offer.model[0];
-                var newItem = {
-                  title: itemTitle,
-                  index: offer['$'].id,
-                  price: offer.price[0],
-                  shop: offer.url[0],
-                  photos: photos,
-                  specs: specs,
-                  shopname: shop.name,
-                  cover: (offer.picture || {}),
-                  vendor: offer.vendor[0],
-                  desc: offer.description[0],
-                  categories: category_array,
-                  category: category_array[0],
-                  prg10: true
-                };
-                Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
-                  if (err)
-                    console.log('find', err);
-                });
-              }
-            })
+            setTimeout(function(){
+              getPictures(shop.name, offer.url[0], function(err, result){
+                if (result) {
+                  photos = result.images;
+                  specs = result.specs;
+                  var category_array = []
+                  offer.categoryId.map(function(id) {
+                    category_array.push(categories[id])
+                  })
+                  var itemTitle;
+                  if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
+                    itemTitle = offer.vendor[0] +' '+offer.model[0];
+                  else
+                    itemTitle = offer.model[0];
+                  var newItem = {
+                    title: itemTitle,
+                    index: offer['$'].id,
+                    price: offer.price[0],
+                    shop: offer.url[0],
+                    photos: photos,
+                    specs: specs,
+                    shopname: shop.name,
+                    cover: (offer.picture || {}),
+                    vendor: offer.vendor[0],
+                    desc: offer.description[0],
+                    categories: category_array,
+                    category: category_array[0],
+                    prg10: 'Эльдорадо'
+                  };
+                  Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
+                    if (err)
+                      console.log('find', err);
+                  });
+                }
+              })
+            }, timeout)
+            timeout += 500;
           }
           else if(hire12.indexOf(parseInt(offer['$'].id)) != -1){
-            console.log('hire12 ',offer['$'].id)
-            getPictures(shop.name, offer.url[0], function(err, result){
-              console.log('hire12 ',offer['$'].id)
-              if (result) {
-                photos = result.images;
-                specs = result.specs;
-                var category_array = []
-                offer.categoryId.map(function(id) {
-                  category_array.push(categories[id])
-                })
-                var itemTitle;
-                if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
-                  itemTitle = offer.vendor[0] +' '+offer.model[0];
-                else
-                  itemTitle = offer.model[0];
-                var newItem = {
-                  title: itemTitle,
-                  index: offer['$'].id,
-                  price: offer.price[0],
-                  shop: offer.url[0],
-                  photos: photos,
-                  specs: specs,
-                  shopname: shop.name,
-                  cover: (offer.picture || {}),
-                  vendor: offer.vendor[0],
-                  desc: offer.description[0],
-                  categories: category_array,
-                  category: category_array[0],
-                  prg12: true
-                };
-                Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
-                  if (err)
-                    console.log('find', err);
-                });
-              }
-            })
+            setTimeout(function(){
+              getPictures(shop.name, offer.url[0], function(err, result){
+                if (result) {
+                  photos = result.images;
+                  specs = result.specs;
+                  var category_array = []
+                  offer.categoryId.map(function(id) {
+                    category_array.push(categories[id])
+                  })
+                  var itemTitle;
+                  if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
+                    itemTitle = offer.vendor[0] +' '+offer.model[0];
+                  else
+                    itemTitle = offer.model[0];
+                  var newItem = {
+                    title: itemTitle,
+                    index: offer['$'].id,
+                    price: offer.price[0],
+                    shop: offer.url[0],
+                    photos: photos,
+                    specs: specs,
+                    shopname: shop.name,
+                    cover: (offer.picture || {}),
+                    vendor: offer.vendor[0],
+                    desc: offer.description[0],
+                    categories: category_array,
+                    category: category_array[0],
+                    prg12: 'Эльдорадо'
+                  };
+                  Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
+                    if (err)
+                      console.log('find', err);
+                  });
+                }
+              })
+            }, timeout)
+            timeout += 500;
           }
           else if(hire24.indexOf(parseInt(offer['$'].id)) != -1){
-            console.log('hire24 ',offer['$'].id)
-            getPictures(shop.name, offer.url[0], function(err, result){
-              console.log('hire24 ',offer['$'].id)
-              if (result) {
-                photos = result.images;
-                specs = result.specs;
-                var category_array = []
-                offer.categoryId.map(function(id) {
-                  category_array.push(categories[id])
-                })
-                var itemTitle;
-                if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
-                  itemTitle = offer.vendor[0] +' '+offer.model[0];
-                else
-                  itemTitle = offer.model[0];
-                var newItem = {
-                  title: itemTitle,
-                  index: offer['$'].id,
-                  price: offer.price[0],
-                  shop: offer.url[0],
-                  photos: photos,
-                  specs: specs,
-                  shopname: shop.name,
-                  cover: (offer.picture || {}),
-                  vendor: offer.vendor[0],
-                  desc: offer.description[0],
-                  categories: category_array,
-                  category: category_array[0],
-                  prg24: true
-                };
-                Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
-                  if (err)
-                    console.log('find', err);
-                });
-              }
-            })
+            setTimeout(function(){
+              getPictures(shop.name, offer.url[0], function(err, result){
+                if (result) {
+                  photos = result.images;
+                  specs = result.specs;
+                  var category_array = []
+                  offer.categoryId.map(function(id) {
+                    category_array.push(categories[id])
+                  })
+                  var itemTitle;
+                  if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
+                    itemTitle = offer.vendor[0] +' '+offer.model[0];
+                  else
+                    itemTitle = offer.model[0];
+                  var newItem = {
+                    title: itemTitle,
+                    index: offer['$'].id,
+                    price: offer.price[0],
+                    shop: offer.url[0],
+                    photos: photos,
+                    specs: specs,
+                    shopname: shop.name,
+                    cover: (offer.picture || {}),
+                    vendor: offer.vendor[0],
+                    desc: offer.description[0],
+                    categories: category_array,
+                    category: category_array[category_array.length - 1],
+                    prg24: 'Эльдорадо'
+                  };
+                  console.log(category_array)
+                  Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
+                    if (err)
+                      console.log('find', err);
+                  });
+                }
+              })
+            }, timeout)
+            timeout += 500;
           }
         })
       });
