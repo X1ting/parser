@@ -58,6 +58,8 @@ exports.getPictures = function(shop, url, done) {
                 }
               }
             })
+            var half_length = Math.ceil(result.images.length / 2);    
+            result.images = result.images.splice(0,half_length);
             $('.specificationTextTable.q-item-full-specs-table tr').each(function(i, item){
               var name = ''
               if (item.children[0])
