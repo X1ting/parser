@@ -57,7 +57,7 @@ var Item = mongoose.model('Item',
     action_ends: Date,
     updated: {
       type: Date,
-      default: Date.now
+      default: Date.now()
     },
     popularity: {
       type: Number,
@@ -129,13 +129,12 @@ var Item = mongoose.model('Item',
                   category_array.push(currCat.name)
                 }while(parseInt(currCat.parentId) != 0);
               })
-              console.log(category_array);
               getPictures(shop.name, offer.url[0], function(err, result){
                 if (result) {
                   photos = result.images;
                   specs = result.specs;
                   var itemTitle;
-                  if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
+                  if(offer.model[0].indexOf(offer.vendor[0]) == -1)
                     itemTitle = offer.vendor[0] +' '+offer.model[0];
                   else
                     itemTitle = offer.model[0];
@@ -149,11 +148,15 @@ var Item = mongoose.model('Item',
                     shopname: shop.name,
                     cover: (offer.picture || {}),
                     vendor: offer.vendor[0],
-                    desc: offer.description[0],
+                    updated: Date.now(),
+                    // desc: offer.description[0],
                     categories: category_array,
-                    category: category_array[0],
+                    category: category_array[category_array.length - 1],
+                    tags: category_array.slice(0,category_array.length - 1),
                     prg10: 'Эльдорадо'
                   };
+                  console.log(newItem.tags);
+                  console.log(category_array);
                   Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
                     if (err)
                       console.log('find', err);
@@ -161,7 +164,7 @@ var Item = mongoose.model('Item',
                 }
               })
             }, timeout)
-            timeout += 500;
+            timeout += 300;
           }
           else if(hire12.indexOf(parseInt(offer['$'].id)) != -1){
             setTimeout(function(){
@@ -175,13 +178,12 @@ var Item = mongoose.model('Item',
                   category_array.push(currCat.name)
                 }while(parseInt(currCat.parentId) != 0);
               })
-              console.log(category_array);
               getPictures(shop.name, offer.url[0], function(err, result){
                 if (result) {
                   photos = result.images;
                   specs = result.specs;
                   var itemTitle;
-                  if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
+                  if(offer.model[0].indexOf(offer.vendor[0]) == -1)
                     itemTitle = offer.vendor[0] +' '+offer.model[0];
                   else
                     itemTitle = offer.model[0];
@@ -195,11 +197,14 @@ var Item = mongoose.model('Item',
                     shopname: shop.name,
                     cover: (offer.picture || {}),
                     vendor: offer.vendor[0],
-                    desc: offer.description[0],
+                    updated: Date.now(),
+                    // desc: offer.description[0],
                     categories: category_array,
-                    category: category_array[0],
+                    category: category_array[category_array.length - 1],
+                    tags: category_array.slice(0,category_array.length - 1),
                     prg12: 'Эльдорадо'
                   };
+                  console.log(newItem.category);
                   Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
                     if (err)
                       console.log('find', err);
@@ -207,7 +212,7 @@ var Item = mongoose.model('Item',
                 }
               })
             }, timeout)
-            timeout += 500;
+            timeout += 300;
           }
           else if(hire24.indexOf(parseInt(offer['$'].id)) != -1){
             setTimeout(function(){
@@ -221,13 +226,12 @@ var Item = mongoose.model('Item',
                   category_array.push(currCat.name)
                 }while(parseInt(currCat.parentId) != 0);
               })
-              console.log(category_array);
               getPictures(shop.name, offer.url[0], function(err, result){
                 if (result) {
                   photos = result.images;
                   specs = result.specs;
                   var itemTitle;
-                  if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
+                  if(offer.model[0].indexOf(offer.vendor[0]) == -1)
                     itemTitle = offer.vendor[0] +' '+offer.model[0];
                   else
                     itemTitle = offer.model[0];
@@ -241,12 +245,14 @@ var Item = mongoose.model('Item',
                     shopname: shop.name,
                     cover: (offer.picture || {}),
                     vendor: offer.vendor[0],
-                    desc: offer.description[0],
+                    // desc: offer.description[0],
+                    updated: Date.now(),
                     categories: category_array,
                     category: category_array[category_array.length - 1],
+                    tags: category_array.slice(0,category_array.length - 1),
                     prg24: 'Эльдорадо'
                   };
-                  console.log(category_array)
+                  console.log(newItem.category);
                   Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
                     if (err)
                       console.log('find', err);
@@ -254,7 +260,7 @@ var Item = mongoose.model('Item',
                 }
               })
             }, timeout)
-            timeout += 500;
+            timeout += 300;
           }
         })
       });

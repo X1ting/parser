@@ -63,7 +63,7 @@ var Item = mongoose.model('Item',
     action_ends: Date,
     updated: {
       type: Date,
-      default: Date.now
+      default: Date.now()
     },
     popularity: {
       type: Number,
@@ -110,7 +110,7 @@ var job = new CronJob('20 * * * * *', function() {
                 category_array.push(categories[id])
               })
               var itemTitle;
-              if(offer.model[0].indexOf('iPad') == -1 && offer.model[0].indexOf('LG') == -1 )
+              if(offer.model[0].indexOf(offer.vendor[0]) == -1)
                 itemTitle = offer.vendor[0] +' '+offer.model[0];
               else
                 itemTitle = offer.model[0];
@@ -124,6 +124,7 @@ var job = new CronJob('20 * * * * *', function() {
                 shopname: shop.name,
                 cover: (offer.picture || {}),
                 vendor: offer.vendor[0],
+                updated: Date.now(),
                 desc: offer.description[0],
                 categories: category_array,
                 category: category_array[0]
@@ -132,7 +133,16 @@ var job = new CronJob('20 * * * * *', function() {
               //TODO: parse specs from site.
               //TODO:
               newItem.prg10 = 'Связной';
-              
+
+              if(newItem.category == "Планшеты"){
+                newItem.category = "Компьютеры";
+                newItem.tags = ["Планшетные ПК"];
+              }
+              else if(newItem.category == "Мобильные телефоны"){
+                newItem.category = "Телефоны и связь";
+                newItem.tags = ["Смартфоны"];
+              }
+
 
               Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
                 if (err)
