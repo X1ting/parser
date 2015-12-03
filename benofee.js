@@ -4,92 +4,24 @@ var getPictures = require('./html_parser.js').getPictures;
 var async = require('async');
 var fs = require('fs');
 var mongoose = require('mongoose');
+var Item = require('./item.js');
 mongoose.connect('mongodb://localhost/benofee');
 var CronJob = require('cron').CronJob;
 var config =
     [
-      { name: 'Связной',
-        url: 'http://feed.tools.mgcom.ru/o.cgi?source=svyaznoy_sankt-peterburg&filter_offers=svyaznoy_credit_0_0_10',
-        url_prepend: 'http://static.svyaznoy.ru/',
-        pictures_prepend_need: false,
-        filename: 'svyaznoy2.txt'
-      }
-      // { name: 'Эльдорадо',
-      //   url: 'http://www.eldorado.ru/_export/new_yandex/showprice.php?id=33',
-      //   url_prepend: 'http://www.eldorado.ru/',
+      // { name: 'Связной',
+      //   url: 'http://feed.tools.mgcom.ru/o.cgi?source=svyaznoy_sankt-peterburg&filter_offers=svyaznoy_credit_0_0_10',
+      //   url_prepend: 'http://static.svyaznoy.ru/',
       //   pictures_prepend_need: false,
-      //   filename: 'eldorado.txt'
+      //   filename: 'svyaznoy2.txt'
       // }
+      { name: 'Эльдорадо',
+        url: 'http://www.eldorado.ru/_export/new_yandex/showprice.php?id=33',
+        url_prepend: 'http://www.eldorado.ru/',
+        pictures_prepend_need: false,
+        filename: 'eldorado.txt'
+      }
     ];
-
-var Item = mongoose.model('Item',
-  {
-    title: String,
-    promo: {
-      type: Boolean,
-      default: false
-    },
-    price: Number,
-    desc: String,
-    specs: [{
-        name: String,
-        value: String
-    }],
-    photos: [String],
-    recommended: [String],
-    shop: String,
-    count: Number,
-    programs: Array,
-    categories: [String],
-    category: String,
-    tags: [String],
-    hide: {
-        type: Boolean,
-        default: false
-    },
-    shopname: String,
-    ordered: {
-      type: Number,
-      default: 0
-    },
-    hide: {
-      type: Boolean,
-      default: false
-    },
-    discount: {
-      type: Number,
-      default: 0
-    },
-    action_ends: Date,
-    updated: {
-      type: Date,
-      default: Date.now
-    },
-    popularity: {
-      type: Number,
-      default: 0
-    },
-    prg6: {
-      type: Boolean,
-      default: false
-    },
-    prg10: {
-      type: Boolean,
-      default: false
-    },
-    prg12: {
-      type: Boolean,
-      default: false
-    },
-    prg24: {
-      type: Boolean,
-      default: false
-    },
-    prg36: {
-      type: Boolean,
-      default: false
-    }
-});
 
 var job = new CronJob('20 * * * * *', function() {
   config.map(function(shop) {
