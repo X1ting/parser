@@ -155,8 +155,7 @@ var Item = mongoose.model('Item',
                     tags: category_array.slice(0,category_array.length - 1),
                     prg10: 'Эльдорадо'
                   };
-                  console.log(newItem.tags);
-                  console.log(category_array);
+                  newItem.tags.push(offer.vendor[0]);
                   Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
                     if (err)
                       console.log('find', err);
@@ -204,6 +203,7 @@ var Item = mongoose.model('Item',
                     tags: category_array.slice(0,category_array.length - 1),
                     prg12: 'Эльдорадо'
                   };
+                  newItem.tags.push(offer.vendor[0]);
                   console.log(newItem.category);
                   Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
                     if (err)
@@ -252,6 +252,7 @@ var Item = mongoose.model('Item',
                     tags: category_array.slice(0,category_array.length - 1),
                     prg24: 'Эльдорадо'
                   };
+                  newItem.tags.push(offer.vendor[0]);
                   console.log(newItem.category);
                   Item.findOneAndUpdate({title: itemTitle}, newItem, {upsert: true, new: true}, function (err, item) {
                     if (err)
