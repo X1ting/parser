@@ -73,11 +73,11 @@ var job = new CronJob('20 * * * * *', function() {
 
               if(newItem.category == "Планшеты"){
                 newItem.category = "Компьютеры";
-                newItem.tags = ["Планшетные ПК", offer.vendor[0]];
+                newItem.tags = ["Планшетные ПК", offer.vendor[0].toUpperCase()];
               }
               else if(newItem.category == "Мобильные телефоны"){
                 newItem.category = "Телефоны и связь";
-                newItem.tags = ["Смартфоны", offer.vendor[0]];
+                newItem.tags = ["Смартфоны", offer.vendor[0].toUpperCase()];
               }
 
 
