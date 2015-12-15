@@ -1,7 +1,10 @@
 var mongoose = require('mongoose');
 
 var Item = mongoose.Schema({
-    title: String,
+    title: {
+        type: String,
+        index: true
+    },
     promo: {
       type: Boolean,
       default: false
@@ -20,11 +23,11 @@ var Item = mongoose.Schema({
     categories: [String],
     category: String,
     tags: [String],
+    shopname: String,
     hide: {
         type: Boolean,
         default: false
     },
-    shopname: String,
     ordered: {
       type: Number,
       default: 0
@@ -39,32 +42,28 @@ var Item = mongoose.Schema({
     },
     action_ends: Date,
     updated: {
-      type: Date,
-      default: Date.now
+      type: Number,
+      default: Date.now()
     },
     popularity: {
       type: Number,
-      default: 0
+      default: 0,
+      index: true 
     },
     prg6: {
-      type: Boolean,
-      default: false
+      type: String
     },
     prg10: {
-      type: Boolean,
-      default: false
+      type: String
     },
     prg12: {
-      type: Boolean,
-      default: false
+      type: String
     },
     prg24: {
-      type: Boolean,
-      default: false
+      type: String
     },
     prg36: {
-      type: Boolean,
-      default: false
+      type: String
     }
 });
 module.exports = mongoose.model('Item', Item);

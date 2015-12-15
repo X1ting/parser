@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":1,"key":{"_id":1},"name":"_id_","ns":"benofee.items"},{"v":1,"key":{"title":1},"name":"title_1","ns":"benofee.items","background":true},{"v":1,"key":{"popularity":1},"name":"popularity_1","ns":"benofee.items","background":true}]}

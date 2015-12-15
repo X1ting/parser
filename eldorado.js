@@ -18,7 +18,10 @@ var config =
 
 var Item = mongoose.model('Item',
   {
-    title: String,
+    title: {
+        type: String,
+        index: true
+    },
     promo: {
       type: Boolean,
       default: false
@@ -37,11 +40,11 @@ var Item = mongoose.model('Item',
     categories: [String],
     category: String,
     tags: [String],
+    shopname: String,
     hide: {
         type: Boolean,
         default: false
     },
-    shopname: String,
     ordered: {
       type: Number,
       default: 0
@@ -61,7 +64,8 @@ var Item = mongoose.model('Item',
     },
     popularity: {
       type: Number,
-      default: 0
+      default: 0,
+      index: true 
     },
     prg6: {
       type: String
@@ -80,7 +84,7 @@ var Item = mongoose.model('Item',
     }
 });
 
-// var job = new CronJob('20 * * * * *', function() {
+var job = new CronJob('* 30 * * * *', function() {
   config.map(function(shop) {
     var obj = xlsx.parse(__dirname + '/r.xlsx');
     var hire10 = [];
@@ -272,9 +276,9 @@ var Item = mongoose.model('Item',
    * at 11:30:00 AM. It does not run on Saturday
    * or Sunday.
    */
-  // }, function () {
-    // mongoose.disconnect();
-  // },
-  // true, /* Start the job right now */
-  // 'America/Los_Angeles' /* Time zone of this job. */
-// );
+  }, function () {
+    mongoose.disconnect();
+  },
+  true, /* Start the job right now */
+  'America/Los_Angeles' /* Time zone of this job. */
+);
